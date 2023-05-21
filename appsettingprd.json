@@ -1,0 +1,68 @@
+{
+  "Inputs": {
+    "Request": {
+      "Provider": "Sqs",
+      "Sqs": {
+        "QueueUrl": "https://sqs.us-west-2.amazonaws.com/149911641352/tps-dv1-usw2-assessment-fiposprocessor-request-queue"
+      }
+    }
+  },
+
+  "Sqs": {
+    // Wait time in seconds for SQS long polling. Must be smaller than HTTP timeout.
+    "WaitTimeSeconds": 3
+  },
+
+  "Tps": {
+    // Port used for HTTP requests (status, health-check, etc.)
+    "HttpPort": 80
+  },
+
+  "Processors": {
+    "FiPosProcessor": {
+      // Timeout in seconds for processor execution. If the parameter is not set, the processor is not controlled.
+      "SecondsTimeout": 600.0,
+
+      // Timeout in seconds for processor to start.
+      "SecondsToStart": 20.0
+    }
+  },
+
+
+  "AWS": {
+    "Profile": "default"
+  },
+  
+  "RabbitMQ": {
+    // Hostname of the RabbitMQ broker, do not include the protocol or the port.
+    "HostName": "b-67e98d3f-5323-463c-95d8-eb11be129820.mq.us-west-2.amazonaws.com",
+    // Port used by the RabbitMQ broker
+    "Port": 5671,    // TODO: [JLF] Can we keep the following under source control? They did for Kafka SaslSsl in Listener.CommandLine's corresponding Kafka config.
+    "Username": "tpservice",
+    "Password": "tpservicetpservice",
+    "RemoteProcessorRequestQueueName": "fiposprocessor_request_mq"
+  },
+
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  },
+
+  "Serilog": {
+    "MinimumLevel": "Verbose",
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "formatter": "Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact"
+        }
+      }
+    ]
+  },
+
+  "HostOptions": {
+    // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.1#shutdowntimeout-1
+    "ShutdownTimeout": "00:04:00"
+  }
+}
